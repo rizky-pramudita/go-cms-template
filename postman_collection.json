@@ -1,0 +1,721 @@
+{
+	"info": {
+		"_postman_id": "go-cms-template-api",
+		"name": "Go CMS Template API",
+		"description": "REST API collection for Go CMS Template service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Content Types",
+			"item": [
+				{
+					"name": "List Content Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types?page=1&page_size=10&is_active=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "is_active", "value": "true", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Content Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Blog Post\",\n    \"slug\": \"blog-post\",\n    \"schema_fields\": {\n        \"fields\": [\n            {\"name\": \"title\", \"type\": \"string\", \"required\": true},\n            {\"name\": \"content\", \"type\": \"richtext\", \"required\": true},\n            {\"name\": \"excerpt\", \"type\": \"text\", \"required\": false}\n        ]\n    },\n    \"is_active\": true,\n    \"display_order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types"]
+						}
+					}
+				},
+				{
+					"name": "Get Content Type by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contentTypeId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Content Type by Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types/slug/:slug",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types", "slug", ":slug"],
+							"variable": [
+								{"key": "slug", "value": "blog-post"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Content Type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Blog Post Updated\",\n    \"is_active\": true,\n    \"display_order\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contentTypeId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Content Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/content-types/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "content-types", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contentTypeId}}"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "List Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts?page=1&page_size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "content_type_id", "value": "", "disabled": true},
+								{"key": "status", "value": "1", "disabled": true, "description": "1=draft, 2=published, 3=archived"},
+								{"key": "search", "value": "", "disabled": true},
+								{"key": "sort_by", "value": "created_at", "disabled": true},
+								{"key": "sort_dir", "value": "desc", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content_type_id\": \"{{contentTypeId}}\",\n    \"author_id\": \"{{authorId}}\",\n    \"title\": \"My First Blog Post\",\n    \"slug\": \"my-first-blog-post\",\n    \"excerpt\": \"A brief introduction to my blog.\",\n    \"content\": \"<p>This is the content of my first blog post.</p>\",\n    \"metadata\": {\n        \"meta_title\": \"My First Blog Post | My Site\",\n        \"meta_description\": \"Read my first blog post about starting a new journey.\",\n        \"meta_keywords\": [\"blog\", \"first post\", \"introduction\"]\n    },\n    \"status\": 1,\n    \"tag_ids\": []\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts"]
+						},
+						"description": "status: 1=draft, 2=published, 3=archived. author_id is required (UUID of user)."
+					}
+				},
+				{
+					"name": "Get Post by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{postId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Post by Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/slug/:slug",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", "slug", ":slug"],
+							"variable": [
+								{"key": "slug", "value": "my-first-blog-post"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"My First Blog Post (Updated)\",\n    \"status\": 2,\n    \"content\": {\n        \"body\": \"<p>Updated content of my first blog post.</p>\",\n        \"excerpt\": \"An updated introduction.\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{postId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{postId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Attach Media to Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"media_id\": \"{{mediaId}}\",\n    \"media_role\": 1,\n    \"display_order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/:id/media",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", ":id", "media"],
+							"variable": [
+								{"key": "id", "value": "{{postId}}"}
+							]
+						},
+						"description": "media_role: 1=featured, 2=gallery, 3=content"
+					}
+				},
+				{
+					"name": "Detach Media from Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/posts/:id/media/:mediaId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "posts", ":id", "media", ":mediaId"],
+							"variable": [
+								{"key": "id", "value": "{{postId}}"},
+								{"key": "mediaId", "value": "{{mediaId}}"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "List Media",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/media?page=1&page_size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "media"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "file_type", "value": "1", "disabled": true, "description": "1=image, 2=video, 3=document"},
+								{"key": "search", "value": "", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Media",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"file_name\": \"hero-image.jpg\",\n    \"object_key\": \"uploads/2026/01/hero-image.jpg\",\n    \"bucket_name\": \"my-cms-bucket\",\n    \"cdn_url\": \"https://cdn.example.com/uploads/2026/01/hero-image.jpg\",\n    \"file_type\": 1,\n    \"mime_type\": \"image/jpeg\",\n    \"file_size\": 245678,\n    \"dimensions\": {\n        \"width\": 1920,\n        \"height\": 1080\n    },\n    \"alt_text\": \"Hero image for the homepage\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/media",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "media"]
+						},
+						"description": "file_type: 1=image, 2=video, 3=document"
+					}
+				},
+				{
+					"name": "Get Media by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/media/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "media", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{mediaId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Media",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"file_name\": \"hero-image-updated.jpg\",\n    \"alt_text\": \"Updated hero image description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/media/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "media", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{mediaId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Media",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/media/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "media", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{mediaId}}"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "List Tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags?page=1&page_size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "search", "value": "", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Technology\",\n    \"slug\": \"technology\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags"]
+						}
+					}
+				},
+				{
+					"name": "Get Tag by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{tagId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Tag by Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags/slug/:slug",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags", "slug", ":slug"],
+							"variable": [
+								{"key": "slug", "value": "technology"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tech\",\n    \"slug\": \"tech\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{tagId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Tag",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tags/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "tags", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{tagId}}"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Contacts",
+			"item": [
+				{
+					"name": "List Contact Submissions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts?page=1&page_size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "status", "value": "1", "disabled": true, "description": "1=new, 2=read, 3=replied, 4=archived"},
+								{"key": "email", "value": "", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Contact Submission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+1234567890\",\n    \"subject\": \"General Inquiry\",\n    \"message\": \"Hello, I would like to know more about your services.\",\n    \"metadata\": {\n        \"source\": \"contact-form\",\n        \"page\": \"/contact\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts"]
+						}
+					}
+				},
+				{
+					"name": "Get Contact Submission by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contactId}}"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Unread Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts/unread-count",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts", "unread-count"]
+						}
+					}
+				},
+				{
+					"name": "Update Contact Submission",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contactId}}"}
+							]
+						},
+						"description": "status: 1=new, 2=read, 3=replied, 4=archived"
+					}
+				},
+				{
+					"name": "Delete Contact Submission",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/contacts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "contacts", ":id"],
+							"variable": [
+								{"key": "id", "value": "{{contactId}}"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "List Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings?page=1&page_size=50",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "50"},
+								{"key": "search", "value": "", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Setting",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"site_name\",\n    \"value\": \"My CMS Site\",\n    \"description\": \"The name of the website\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings"]
+						}
+					}
+				},
+				{
+					"name": "Upsert Setting",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"site_description\",\n    \"value\": \"A modern content management system\",\n    \"description\": \"The description/tagline of the website\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings/upsert",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings", "upsert"]
+						},
+						"description": "Creates the setting if it doesn't exist, updates if it does"
+					}
+				},
+				{
+					"name": "Get Setting by Key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings/:key",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings", ":key"],
+							"variable": [
+								{"key": "key", "value": "site_name"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Multiple Settings",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keys\": [\"site_name\", \"site_description\", \"contact_email\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings/bulk",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings", "bulk"]
+						}
+					}
+				},
+				{
+					"name": "Update Setting",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"My Updated CMS Site\",\n    \"description\": \"Updated website name\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings/:key",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings", ":key"],
+							"variable": [
+								{"key": "key", "value": "site_name"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Setting",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/settings/:key",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "settings", ":key"],
+							"variable": [
+								{"key": "key", "value": "site_name"}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
